@@ -13,13 +13,7 @@ app.use(express.static('public'));
 
 app.get('/v1/notes', (req, res) => {
   let {searchTerm} = req.query;
-  if (searchTerm) {
-    searchTerm.toLowerCase();
-    res.json(data.filter((item) => item.title.toLowerCase().includes(searchTerm)));
-  } else {
-    res.json(data);
-  }
-  
+  res.json(searchTerm ? data.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase())) : data);
 });
 
 app.get('/v1/notes/:id', (req, res) => { 
@@ -27,10 +21,9 @@ app.get('/v1/notes/:id', (req, res) => {
   res.json(item);
 });
 
-app
-  .listen(8080, function() {
-    console.info(`Server listening on ${this.address().port}`);
-  })
+app.listen(8080, function() {
+  console.info(`Server listening on ${this.address().port}`);
+})
   .on('error', err => {
     console.error(err);
   });
