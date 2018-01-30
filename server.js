@@ -2,6 +2,8 @@
 const express = require('express');
 
 const data = require('./db/notes');
+const simDB = require('./db/simDB');
+const notes = simDB.initialize(data);
 const {PORT} = require('./config');
 const {simpleLogger} = require('./logger-middleware');
 
@@ -12,16 +14,55 @@ const {simpleLogger} = require('./logger-middleware');
 const app = express();
 
 app.use(express.static('public'));
+app.use(express.json());
 app.use(simpleLogger);
 
-app.get('/v1/notes', (req, res) => {
-  let {searchTerm} = req.query;
-  res.json(searchTerm ? data.filter((item) => item.title.toLowerCase().includes(searchTerm.toLowerCase())) : data);
+app.get('/v1/notes', (req, res, next) => {
+  const {searchTerm} = req.query;
+
+  notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err);
+    }
+    res.json(list);
+  });
 });
 
-app.get('/v1/notes/:id', (req, res) => { 
-  const item = data.find(item => item.id === parseInt(req.params.id));
-  res.json(item);
+app.get('/v1/notes/:id', (req, res, next) => { 
+  const id = req.params.id;
+  notes.find(id, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      res.json({message: 'not found'});
+    }
+  }); 
+});
+
+app.put('/v1/notes/:id', (req, res, next) => {
+  const id = req.params.id;
+  const updateObject = {};
+  const updateFields = ['title', 'content'];
+
+  updateFields.forEach(field => {
+    if (field in req.body) {
+      updateObject[field] = req.body[field];
+    }
+  });
+
+  notes.update(id, updateObject, (err, item) => {
+    if (err) { 
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
+  });
 });
 
 app.get('/foo', (req, res, next) => {

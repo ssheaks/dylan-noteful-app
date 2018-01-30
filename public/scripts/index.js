@@ -1,3 +1,4 @@
+
 /* global $ noteful api store */
 'use strict';
 
