@@ -20,6 +20,7 @@ const noteful = (function () {
     const listItems = list.map(item => `
     <li data-id="${item.id}" class="js-note-element ${currentNote.id === item.id ? 'active' : ''}">
       <a href="#" class="name js-note-show-link">${item.title}</a>
+      <button class="removeBtn js-note-delete-button">X</button>
     </li>`);
     return listItems.join('');
   }
@@ -74,15 +75,31 @@ const noteful = (function () {
         content: editForm.find('.js-note-content-entry').val()
       };
 
-      noteObj.id = store.currentNote.id;
+      if (store.currentNote.id) {
 
-      api.update(noteObj.id, noteObj, updateResponse => {
-        store.currentNote = updateResponse;
-        const note = store.notes.find(note => note.id === store.currentNote.id);
-        note.title = noteObj.title;
-        
-        render();
-      });
+        api.update(store.currentNote.id, noteObj, updateResponse => {
+          store.currentNote = updateResponse;
+          const note = store.notes.find(note => note.id === store.currentNote.id);
+          note.title = noteObj.title;
+
+          render();
+        });
+      } else {
+        api.create(noteObj, updateResponse => {
+          store.currentNote = updateResponse;
+          store.notes.push(updateResponse);
+          render();
+        });
+      }
+      
+    });
+  }
+
+  function handleNoteStartNewSubmit() {
+    $('.js-start-new-note-form').on('submit', event => {
+      event.preventDefault();
+      store.currentNote = false;
+      render();
     });
   }
 
@@ -90,6 +107,7 @@ const noteful = (function () {
     handleNoteItemClick();
     handleNoteSearchSubmit();
     handleNoteFormSubmit();
+    handleNoteStartNewSubmit();
   }
 
   // This object contains the only exposed methods from this module:
