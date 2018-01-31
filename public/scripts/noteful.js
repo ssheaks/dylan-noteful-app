@@ -103,11 +103,23 @@ const noteful = (function () {
     });
   }
 
+  function handleNoteDelete() {
+    $('.js-notes-list').on('click', '.js-note-delete-button', event => {
+      const id = getNoteIdFromElement(event.currentTarget);
+      api.delete(id, updateResponse => {
+        const noteIndex = store.notes.findIndex(note => note.id === id);
+        store.notes.splice(noteIndex, 1);
+        render();
+      });
+    });
+  }
+
   function bindEventListeners() {
     handleNoteItemClick();
     handleNoteSearchSubmit();
     handleNoteFormSubmit();
     handleNoteStartNewSubmit();
+    handleNoteDelete();
   }
 
   // This object contains the only exposed methods from this module:

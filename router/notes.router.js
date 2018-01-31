@@ -78,7 +78,16 @@ router.put('/notes/:id', (req, res, next) => {
 
 router.delete('/notes/:id', (req, res, next) => {
   const id = req.params.id;
-  
+  notes.delete(id, (err, length) => {
+    if (err) {
+      next(err);
+    }
+    if (length) {
+      res.status(204).end();
+    } else {
+      res.json({message: 'not found'});
+    }
+  });
 });
 
 module.exports = router;
