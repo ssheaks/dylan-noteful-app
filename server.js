@@ -8,11 +8,9 @@ const simDB = require('./db/simDB');
 const notes = simDB.initialize(data);
 const {PORT} = require('./config');
 
-
-
+app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(express.json());
-app.use(morgan('dev'));
 
 app.get('/v1/notes', (req, res, next) => {
   const {searchTerm} = req.query;
