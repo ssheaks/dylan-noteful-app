@@ -1,21 +1,18 @@
 'use strict';
 const express = require('express');
+const app = express();
+const morgan = require('morgan');
 
 const data = require('./db/notes');
 const simDB = require('./db/simDB');
 const notes = simDB.initialize(data);
 const {PORT} = require('./config');
-const {simpleLogger} = require('./logger-middleware');
 
-// console.log('hello world!');
 
-// INSERT EXPRESS APP CODE HERE...
-
-const app = express();
 
 app.use(express.static('public'));
 app.use(express.json());
-app.use(simpleLogger);
+app.use(morgan('dev'));
 
 app.get('/v1/notes', (req, res, next) => {
   const {searchTerm} = req.query;
