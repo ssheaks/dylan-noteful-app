@@ -97,7 +97,7 @@ const simDB = {
           return callback(null, len);
         }
       } catch (err) {
-        callback(err);
+        callback(err, null);
       }
     }, DELAY);
   }
