@@ -1,10 +1,8 @@
 /* global $ store api*/
 'use strict';
 
-const noteful = (function () {
-
+const noteful = (function() {
   function render() {
-
     const notesList = generateNotesList(store.notes, store.currentNote);
     $('.js-notes-list').html(notesList);
 
@@ -17,11 +15,15 @@ const noteful = (function () {
    * GENERATE HTML FUNCTIONS
    */
   function generateNotesList(list, currentNote) {
-    const listItems = list.map(item => `
-    <li data-id="${item.id}" class="js-note-element ${currentNote.id === item.id ? 'active' : ''}">
+    const listItems = list.map(
+      item => `
+    <li data-id="${item.id}" class="js-note-element ${
+        currentNote.id === item.id ? 'active' : ''
+      }">
       <a href="#" class="name js-note-show-link">${item.title}</a>
       <button class="removeBtn js-note-delete-button">X</button>
-    </li>`);
+    </li>`
+    );
     return listItems.join('');
   }
 
@@ -29,7 +31,9 @@ const noteful = (function () {
    * HELPERS
    */
   function getNoteIdFromElement(item) {
-    const id = $(item).closest('.js-note-element').data('id');
+    const id = $(item)
+      .closest('.js-note-element')
+      .data('id');
     return id;
   }
 
@@ -42,11 +46,10 @@ const noteful = (function () {
 
       const noteId = getNoteIdFromElement(event.currentTarget);
 
-      api.details(noteId, response => {
+      api.details(noteId).then(response => {
         store.currentNote = response;
         render();
       });
-
     });
   }
 
@@ -55,9 +58,9 @@ const noteful = (function () {
       event.preventDefault();
 
       const searchTerm = $('.js-note-search-entry').val();
-      store.currentSearchTerm =  searchTerm ? { searchTerm } : {};
-      
-      api.search(store.currentSearchTerm, response => {
+      store.currentSearchTerm = searchTerm ? { searchTerm } : {};
+
+      api.search(store.currentSearchTerm).then(response => {
         store.notes = response;
         render();
       });
@@ -76,22 +79,22 @@ const noteful = (function () {
       };
 
       if (store.currentNote.id) {
-
-        api.update(store.currentNote.id, noteObj, updateResponse => {
+        api.update(store.currentNote.id, noteObj).then(updateResponse => {
           store.currentNote = updateResponse;
-          const note = store.notes.find(note => note.id === store.currentNote.id);
+          const note = store.notes.find(
+            note => note.id === store.currentNote.id
+          );
           note.title = noteObj.title;
 
           render();
         });
       } else {
-        api.create(noteObj, updateResponse => {
+        api.create(noteObj).then(updateResponse => {
           store.currentNote = updateResponse;
           store.notes.push(updateResponse);
           render();
         });
       }
-      
     });
   }
 
@@ -106,7 +109,7 @@ const noteful = (function () {
   function handleNoteDelete() {
     $('.js-notes-list').on('click', '.js-note-delete-button', event => {
       const id = getNoteIdFromElement(event.currentTarget);
-      api.delete(id, updateResponse => {
+      api.delete(id).then(updateResponse => {
         const noteIndex = store.notes.findIndex(note => note.id === id);
         store.notes.splice(noteIndex, 1);
         render();
@@ -125,7 +128,6 @@ const noteful = (function () {
   // This object contains the only exposed methods from this module:
   return {
     render: render,
-    bindEventListeners: bindEventListeners,
+    bindEventListeners: bindEventListeners
   };
-
-}());
+})();
