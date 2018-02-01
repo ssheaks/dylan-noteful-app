@@ -18,8 +18,8 @@ const noteful = (function() {
     const listItems = list.map(
       item => `
     <li data-id="${item.id}" class="js-note-element ${
-        currentNote.id === item.id ? 'active' : ''
-      }">
+    currentNote.id === item.id ? 'active' : ''
+  }">
       <a href="#" class="name js-note-show-link">${item.title}</a>
       <button class="removeBtn js-note-delete-button">X</button>
     </li>`
@@ -37,12 +37,8 @@ const noteful = (function() {
     return id;
   }
 
-  function updateStore(updateResponse) {
-    store.currentNote = updateResponse;
-    api.search(store.currentSearchTerm).then(response => {
-      store.notes = response;
-      render();
-    });
+  function updateStore() {
+    return api.search(store.currentSearchTerm);
   }
   /**
    * EVENT LISTENERS AND HANDLERS
@@ -86,13 +82,20 @@ const noteful = (function() {
       };
 
       if (store.currentNote.id) {
-        api.update(store.currentNote.id, noteObj).then(updateResponse => {
-          updateStore(updateResponse);
-        });
+        api.update(store.currentNote.id, noteObj)
+          .then(updateStore)
+          .then(updateResponse => {
+            store.currentNote = updateResponse;
+            render();
+          });
       } else {
-        api.create(noteObj).then(updateResponse => {
-          updateStore(updateResponse);
-        });
+        api.create(noteObj)
+          .then(updateStore)
+          .then(updateResponse => {
+            console.log();
+            store.notes = updateResponse;
+            render();
+          });
       }
     });
   }
@@ -108,11 +111,13 @@ const noteful = (function() {
   function handleNoteDelete() {
     $('.js-notes-list').on('click', '.js-note-delete-button', event => {
       const id = getNoteIdFromElement(event.currentTarget);
-      api.delete(id).then(updateResponse => {
-        const noteIndex = store.notes.findIndex(note => note.id === id);
-        store.notes.splice(noteIndex, 1);
-        render();
-      });
+      api.delete(id)
+        .then(updateStore)
+        .then(updateResponse => {
+          store.currentNote = false;
+          store.notes = updateResponse;
+          render();
+        });
     });
   }
 
