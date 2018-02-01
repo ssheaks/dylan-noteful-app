@@ -37,8 +37,16 @@ const noteful = (function() {
     return id;
   }
 
+  function updateCurrentNote(updateResponse) {
+    store.currentNote = updateResponse;
+  }
+
   function updateStore() {
-    return api.search(store.currentSearchTerm);
+    api.search(store.currentSearchTerm)
+      .then(updateResponse => {
+        store.notes = updateResponse;
+        render();
+      });
   }
   /**
    * EVENT LISTENERS AND HANDLERS
@@ -63,10 +71,7 @@ const noteful = (function() {
       const searchTerm = $('.js-note-search-entry').val();
       store.currentSearchTerm = searchTerm ? { searchTerm } : {};
 
-      api.search(store.currentSearchTerm).then(response => {
-        store.notes = response;
-        render();
-      });
+      updateStore();
     });
   }
 
@@ -82,20 +87,14 @@ const noteful = (function() {
       };
 
       if (store.currentNote.id) {
-        api.update(store.currentNote.id, noteObj)
-          .then(updateStore)
-          .then(updateResponse => {
-            store.currentNote = updateResponse;
-            render();
-          });
+        api
+          .update(store.currentNote.id, noteObj)
+          .then(updateCurrentNote)
+          .then(updateStore);
       } else {
         api.create(noteObj)
-          .then(updateStore)
-          .then(updateResponse => {
-            console.log();
-            store.notes = updateResponse;
-            render();
-          });
+          .then(updateCurrentNote)
+          .then(updateStore);
       }
     });
   }
@@ -112,12 +111,8 @@ const noteful = (function() {
     $('.js-notes-list').on('click', '.js-note-delete-button', event => {
       const id = getNoteIdFromElement(event.currentTarget);
       api.delete(id)
-        .then(updateStore)
-        .then(updateResponse => {
-          store.currentNote = false;
-          store.notes = updateResponse;
-          render();
-        });
+        .then(updateResponse => store.currentNote = false)
+        .then(updateStore);
     });
   }
 
@@ -132,6 +127,7 @@ const noteful = (function() {
   // This object contains the only exposed methods from this module:
   return {
     render: render,
-    bindEventListeners: bindEventListeners
+    bindEventListeners: bindEventListeners,
+    updateStore
   };
 })();
