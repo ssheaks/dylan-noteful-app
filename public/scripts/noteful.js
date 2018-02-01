@@ -37,6 +37,13 @@ const noteful = (function() {
     return id;
   }
 
+  function updateStore(updateResponse) {
+    store.currentNote = updateResponse;
+    api.search(store.currentSearchTerm).then(response => {
+      store.notes = response;
+      render();
+    });
+  }
   /**
    * EVENT LISTENERS AND HANDLERS
    */
@@ -80,19 +87,11 @@ const noteful = (function() {
 
       if (store.currentNote.id) {
         api.update(store.currentNote.id, noteObj).then(updateResponse => {
-          store.currentNote = updateResponse;
-          const note = store.notes.find(
-            note => note.id === store.currentNote.id
-          );
-          note.title = noteObj.title;
-
-          render();
+          updateStore(updateResponse);
         });
       } else {
         api.create(noteObj).then(updateResponse => {
-          store.currentNote = updateResponse;
-          store.notes.push(updateResponse);
-          render();
+          updateStore(updateResponse);
         });
       }
     });
