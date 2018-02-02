@@ -145,4 +145,15 @@ describe('api.PUT', function() {
           });
       });
   });
+
+  it('should not PUT an existing object if inputs are invalid', function() {
+    let badUpdate = { title: '', id: 999};
+    return chai 
+      .request(app)
+      .put('/v1/notes/1000')
+      .send(badUpdate)
+      .catch(function(err) {
+        expect(err).to.have.status(400);
+      });
+  });
 });
