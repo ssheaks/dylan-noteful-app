@@ -68,6 +68,28 @@ describe('api.GET /notes', function() {
   });
 });
 
+describe('api.GET /notes/:id', function() {
+  it('should return a single note if ID exists in memory', function() {
+    const randID = Math.floor(Math.random() * 10) + 1000;
+    return chai
+      .request(app)
+      .get(`/v1/notes/${randID}`)
+      .then(function(res) {
+        expect(res.body.id).to.equal(randID);
+      });
+  });
+
+  it('should return an error if note ID does not exist', function() {
+    const badID = 10000;
+    return chai
+      .request(app)
+      .get(`/v1/notes/${badID}`)
+      .catch(function(err) {
+        expect(err).to.have.status(404);
+      });
+  });
+});
+
 describe('api.POST /notes', function() {
   it('should POST a new note with valid inputs', function() {
     let newObject = { title: 'CATS!', content: 'A lot of cats'};
@@ -80,7 +102,6 @@ describe('api.POST /notes', function() {
         expect(res).to.have.status(201);
         expect(res.body).to.be.a('object');
         expect(res.body.id).to.not.equal('null');
-        console.log(res.body);
       })
       .then(function(){
         return chai
