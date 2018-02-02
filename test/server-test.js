@@ -48,3 +48,9 @@ describe('404 handler', function() {
       });
   });
 });
+
+describe('api.GET', function() {
+  it('should GET a list of notes', function() {
+
+  });
+});
