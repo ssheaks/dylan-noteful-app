@@ -51,6 +51,19 @@ describe('404 handler', function() {
 
 describe('api.GET', function() {
   it('should GET a list of notes', function() {
+    return chai
+      .request(app)
+      .get('/v1/notes')
+      .then(function(res) {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a('array');
+        expect(res.body.length).to.be.at.least(10);
 
+        const expectedKeys = ['id', 'title', 'content'];
+        res.body.forEach(item => {
+          expect(item).to.have.keys(expectedKeys);
+        });
+      });
   });
 });
