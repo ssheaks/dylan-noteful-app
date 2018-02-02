@@ -124,3 +124,25 @@ describe('api.POST /notes', function() {
       });
   });
 });
+
+describe('api.PUT', function() {
+  it('should PUT an existing object with valid input', function() {
+    let updateObject = { title: 'CATSSSS', content: 'CATTASSASF', id: 1000};
+    return chai
+      .request(app)
+      .put('/v1/notes/1000')
+      .send(updateObject)
+      .then(function(res) {
+        expect(res).to.have.status(200);
+        expect(res.body).to.deep.equal(updateObject);
+      })
+      .then(function() {
+        return chai
+          .request(app)
+          .get('/v1/notes')
+          .then(function(res) {
+            expect(res.body.length).to.equal(10);
+          });
+      });
+  });
+});
