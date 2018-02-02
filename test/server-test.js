@@ -126,7 +126,7 @@ describe('api.POST /notes', function() {
 });
 
 describe('api.PUT', function() {
-  it('should PUT an existing object with valid input', function() {
+  it.only('should PUT an existing object with valid input', function() {
     let updateObject = { title: 'CATSSSS', content: 'CATTASSASF', id: 1000};
     return chai
       .request(app)
