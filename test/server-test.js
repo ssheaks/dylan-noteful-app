@@ -69,7 +69,7 @@ describe('api.GET /notes', function() {
 });
 
 describe('api.POST /notes', function() {
-  it('should post a new note with valid inputs', function() {
+  it('should POST a new note with valid inputs', function() {
     let newObject = { title: 'CATS!', content: 'A lot of cats'};
 
     return chai
@@ -89,6 +89,17 @@ describe('api.POST /notes', function() {
           .then(function(res) {
             expect(res.body.length).to.be.eq(11);
           });
+      });
+  });
+
+  it('should not POST a new note with invalid inputs', function(){
+    let newObject = { title: ''};
+    return chai
+      .request(app)
+      .post('/v1/notes')
+      .send(newObject)
+      .catch(function(err) {
+        expect(err).to.have.status(400);
       });
   });
 });
