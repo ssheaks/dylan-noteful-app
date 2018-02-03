@@ -125,8 +125,8 @@ describe('api.POST /notes', function() {
   });
 });
 
-describe('api.PUT', function() {
-  it.only('should PUT an existing object with valid input', function() {
+describe('api.PUT /notes/:id', function() {
+  it('should PUT an existing object with valid input', function() {
     let updateObject = { title: 'CATSSSS', content: 'CATTASSASF', id: 1000};
     return chai
       .request(app)
@@ -155,5 +155,28 @@ describe('api.PUT', function() {
       .catch(function(err) {
         expect(err).to.have.status(400);
       });
+  });
+});
+
+describe('api.DELETE /notes/:id', function() {
+  it.only('should DELETE a note with a valid id', function() {
+    return chai
+      .request(app)
+      .delete('/v1/notes/1000')
+      .then(function(res) {
+        expect(res).to.have.status(204);
+      })
+      .then(function() {
+        return chai
+          .request(app)
+          .get('/v1/notes')
+          .then(function(res) {
+            expect(res.body.length).to.equal(9);
+          });
+      });
+  });
+
+  it.only('should not DELETE a note if the id does not exist', function() {
+
   });
 });
