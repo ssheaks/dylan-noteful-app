@@ -114,7 +114,7 @@ describe('api.POST /notes', function() {
   });
 
   it('should not POST a new note with invalid inputs', function(){
-    let newObject = { title: ''};
+    let newObject = { };
     return chai
       .request(app)
       .post('/v1/notes')
@@ -141,7 +141,7 @@ describe('api.PUT /notes/:id', function() {
           .request(app)
           .get('/v1/notes')
           .then(function(res) {
-            expect(res.body.length).to.equal(10);
+            expect(res.body.length).to.equal(12);
           });
       });
   });
@@ -159,7 +159,7 @@ describe('api.PUT /notes/:id', function() {
 });
 
 describe('api.DELETE /notes/:id', function() {
-  it.only('should DELETE a note with a valid id', function() {
+  it('should DELETE a note with a valid id', function() {
     return chai
       .request(app)
       .delete('/v1/notes/1000')
@@ -171,12 +171,17 @@ describe('api.DELETE /notes/:id', function() {
           .request(app)
           .get('/v1/notes')
           .then(function(res) {
-            expect(res.body.length).to.equal(9);
+            expect(res.body.length).to.equal(11);
           });
       });
   });
 
-  it.only('should not DELETE a note if the id does not exist', function() {
-
+  it('should not DELETE a note if the id does not exist', function() {
+    return chai
+      .request(app)
+      .delete('/v1/notes/999')
+      .catch(function(err) {
+        expect(err).to.have.status(404);
+      });
   });
 });
