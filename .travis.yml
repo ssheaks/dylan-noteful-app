@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: LZbUjjendf6f9rhB5Zgv/d1XL5ySswAeWocu255VVUOwhQT+v7JKDx4iBQqoK+46j0gG7lJOmHAq8bErLCQkvhYX0bKqDiAXvKQanZlvcOXzbX90GJVVaFd3O9Y1kpgvn/NoQ22aDxyydCZkQK2SH318pisHiyV+SRoBjhpOV+ZnEMmA9msGfe+RwdAwsNo/00rdNUXzmuOjqxtM3svrJ39uQVAeEqaPDL5KLReYGKVJwCHByT5e4jBNjaMlwxrJHNRZUSeFXfzghTZBEcC7Gkut9XH+8vu1NA0f8j09Y7geds3WiKPRfQoXyqmdJ/qstFQskwq2+E+l1DoPCceONpMd1ZsedXXbOg2XAfI+u/wsKxR77aX7opR18hCaZZvUIK3/Xy56nxDbNOcuetk1awO2xk/5dTnowlcazT1a8CyZH5XBxtAXvc1YxkJsd55Us80GqSbGByvy3IKCKozQJZDrP89Gc6M28+b3+99jPyf7VfgMWBzkpKlf9NbdEN0X2eMx86nn23kEFfCqm/Wofbeao1KWLlRpq+H0FanmnmNjlOFaEoT9QgiZL6/aYYN8WFLWN4hvdpL9T2+X51gT1+NzhO2zxj7FL/E/G33Qw90dsiGxJFrYPbPojfgzNvOK6wcYRyrL94cEd6y3hbz3rLQx73c99A5wPWnhubr7REU=
+  app: noteful-v1-dylan
+  on:
+    repo: thinkful-ei18/dylan-noteful-app
